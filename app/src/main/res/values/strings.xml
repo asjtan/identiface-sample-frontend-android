@@ -1,9 +1,10 @@
 <resources>
     <string name="app_name">Identiface</string>
     <string name="title_text">Welcome to Identiface!</string>
-    <string name="label_text">Login to continue.</string>
+    <string name="label_text">Tap or Scan to continue.</string>
     <string name="action_button_label">Verify my identity</string>
     <string name="nricField"></string>
+    <string name="singpass_label">By tapping your pass or scanning your ID card, you allow us to capture your photo for the purpose of verifying that it matches with the government\'s biometrics database based on the Singpass Terms of Use.</string>
 
     <!-- to customise the language -->
     <string name="iproov__language_file">en-GB</string>

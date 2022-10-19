@@ -11,6 +11,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/label_text"
+        android:textSize="14sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -53,7 +54,7 @@
         android:id="@+id/actionButton"
         android:layout_width="198dp"
         android:layout_height="62dp"
-        android:layout_marginTop="70dp"
+        android:layout_marginTop="68dp"
         android:backgroundTint="@color/colorPrimary"
         android:onClick="actionButtonPressed"
         android:text="@string/action_button_label"
@@ -74,5 +75,28 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/nricFieldInput" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="28dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/singpassLabel"
+        app:srcCompat="@drawable/singpass" />
+
+    <TextView
+        android:id="@+id/singpassLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="24dp"
+        android:text="@string/singpass_label"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/actionButton" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

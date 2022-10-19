@@ -43,9 +43,13 @@ public class MainActivity extends AppCompatActivity {
     final String STREAMING_URL = "https://stg-bio-stream.singpass.gov.sg";
 
     // Identiface QuickStart backend API URLs and secret pass
-    final String QUICKSTART_BASE = "https://developer.bio-api.singpass.gov.sg/api/";
-    final String GET_SESSION_TOKEN_URL = QUICKSTART_BASE + "face/verify/token";
-    final String VALIDATE_RESULT_URL = QUICKSTART_BASE + "face/verify/validate";
+//    final String QUICKSTART_BASE = "https://developer.bio-api.singpass.gov.sg/api/";
+//    final String GET_SESSION_TOKEN_URL = QUICKSTART_BASE + "face/verify/token";
+//    final String VALIDATE_RESULT_URL = QUICKSTART_BASE + "face/verify/validate";
+
+    final String QUICKSTART_BASE = "https://certisplusstaging.com/FaceCompareAPI/api/";
+    final String GET_SESSION_TOKEN_URL = QUICKSTART_BASE + "GetSessionToken";
+    final String VALIDATE_RESULT_URL = QUICKSTART_BASE + "FaceValidate";
     final String QUICKSTART_PASS = "ndi-api";
 
     // API Request parameters
@@ -100,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
         requestQueue = Volley.newRequestQueue(this);
 
         // for quick debugging
-        editText.setText("G2979480X");
+        editText.setText("S2200001B");
     }
 
     public void actionButtonPressed(View view) {
@@ -146,9 +150,9 @@ public class MainActivity extends AppCompatActivity {
 
         JSONObject reqJSON = new JSONObject();
         try {
-            reqJSON.put("user_id", nric);
-            reqJSON.put("service_id", serviceID);
-            reqJSON.put("pw", QUICKSTART_PASS);
+            reqJSON.put("userid", nric);
+            //reqJSON.put("service_id", serviceID);
+            //reqJSON.put("pw", QUICKSTART_PASS);
         } catch (JSONException e) {
             e.printStackTrace();
             didCallAPIWithNoErrors = false;
@@ -165,18 +169,29 @@ public class MainActivity extends AppCompatActivity {
                 try {
 
                     String token = response.getString("token");
-                    sessionToken = token;
+                    if(!token.equalsIgnoreCase("null")) {
+                        sessionToken = token;
 
-                    Snackbar snackBar = Snackbar.make(view, "Success! Tap the button to begin facial verification.", 2000);
-                    snackBar.show();
+//                        Snackbar snackBar = Snackbar.make(view, "Success! Tap the button to begin facial verification.", 2000);
+//                        snackBar.show();
 
-                    labelText.setText("Ready to scan your face!");
-                    actionButton.setEnabled(true);
-                    actionButton.setText("Scan my face");
-                    actionButton.setBackgroundTintList(ContextCompat.getColorStateList(MainActivity.this, R.color.colorSuccess));
-                    editText.setEnabled(false);
+                        labelText.setText("Ready to scan your face!");
+                        actionButton.setEnabled(true);
+                        actionButton.setText("Scan my face");
+                        actionButton.setBackgroundTintList(ContextCompat.getColorStateList(MainActivity.this, R.color.colorSuccess));
+                        editText.setEnabled(false);
 
-                    didCallAPIWithNoErrors = true;
+                        didCallAPIWithNoErrors = true;
+
+                        labelText.setText("Verifying... please wait");
+                        actionButton.setVisibility(View.INVISIBLE);
+                        launchSDK(view);
+                    } else {
+                        labelText.setText("Incorrect NRIC/FIN number. Try again.");
+                        editText.setEnabled(true);
+                        actionButton.setEnabled(true);
+                    }
+
                 } catch (Exception e) {
                     Log.d("Response Error", response.toString());
                     didCallAPIWithNoErrors = false;
@@ -238,8 +253,8 @@ public class MainActivity extends AppCompatActivity {
                 // CUSTOM UI Styles
                 Log.i("iProovResponse Feedback Code",
                         String.valueOf(iproovResponse.getFeedbackCode()));
-                Log.i("iProovResponse Exception",
-                        iproovResponse.getException().getClass().toString());
+//                Log.i("iProovResponse Exception",
+//                        iproovResponse.getException().getClass().toString());
                 Log.i("iProovResponse reason", String.valueOf(iproovResponse.getReason()));
                 Snackbar snackbar = Snackbar.make(view, iproovResponse.getReason(), 5000);
                 snackbar.show();
@@ -263,9 +278,9 @@ public class MainActivity extends AppCompatActivity {
         // from the trusted source
         JSONObject reqJSON = new JSONObject();
         try {
-            reqJSON.put("user_id", nric);
-            reqJSON.put("service_id", serviceID);
-            reqJSON.put("pw", QUICKSTART_PASS);
+            reqJSON.put("nric", nric);
+            //reqJSON.put("service_id", serviceID);
+            //reqJSON.put("pw", QUICKSTART_PASS);
             reqJSON.put("token", sessionToken);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -281,7 +296,7 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onResponse(JSONObject response) {
                     try {
-                        hasSuccessfullyFaceVerified = response.getBoolean("is_passed");
+                        hasSuccessfullyFaceVerified = response.getBoolean("passed");
 
                         if (hasSuccessfullyFaceVerified) {
                             Snackbar snackbar = Snackbar.make(view, "Face verification successful!", 5000);
@@ -289,9 +304,11 @@ public class MainActivity extends AppCompatActivity {
 
                             labelText.setText("Successful validation!");
                             actionButton.setText("SUCCESS");
-                            actionButton.setEnabled(false);
+                            //actionButton.setEnabled(false);
 
-                            startActivity(loginIntent);
+                            resetSession();
+
+                            //startActivity(loginIntent);
                         } else {
                             Log.d("VALIDATE RESPONSE", response.toString());
                             String score = response.get("score").toString();
@@ -349,7 +366,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void resetSession() {
         sessionToken = "";
-        labelText.setText("Try again?");
+        labelText.setText("Tap or Scan to continue.");
         actionButton.setText("Verify my identity");
         actionButton.setBackgroundTintList(ContextCompat.getColorStateList(MainActivity.this, R.color.colorPrimary));
         progressBar.setVisibility(View.INVISIBLE);
